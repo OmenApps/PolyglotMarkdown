@@ -11,6 +11,16 @@ The *PolyglotMarkdown* format is an extension of Markdown designed to allow auth
 
 The *PolyglotMarkdown* format is ideal for creating documents that need to be accessible in multiple languages, such as documentation, knowledge bases, and other multilingual content.
 
+## Why Would I Use This Instead of Separate Files for Each Language?
+
+Imagine you have 100 articles in your knowledgebase, and right now you’re managing them in two languages. With separate Markdown files per language, that’s already 200 files to manage! As your business grows and you start adding more languages — 5 or even 10 — those 200 files will balloon into 500 or 1000. Painful!
+
+But PolyglotMarkdown might be just what you're looking for. Instead of trying to keep every language version of your articles consistenty worded and consistently formatted across a bunch of files, PolyglotMarkdown lets you manage everything in one tidy package. Want to add a new section to an article? You can do it in one place, and it’s there for every language. Need to delete something? One and done. No need to open a dozen files just to make the same small change for all the languages you support.
+
+But PolyglotMarkdown isn’t all-or-nothing. If you already have separate files for each language and that works for you, great! You can combine them into a PolyglotMarkdown document using [transclusion](README.md#5-transclusion-including-external-content) and enjoy the benefits without tossing your existing workflow out the window. It’s flexible.
+
+So, if you’re looking to keep your sanity as your content grows and the number of language you support increases, PolyglotMarkdown is worth considering. It’s like having one file to rule them all, making your work smoother, faster, and a less stressful. And who doesn’t want that?
+
 ## Key Features
 
 ### 1. Metadata Section
