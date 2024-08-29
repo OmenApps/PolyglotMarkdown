@@ -3,6 +3,30 @@ A versatile Markdown extension designed to manage and display multilingual conte
 
 This project is a *Work in Progress*
 
+## Table of contents
+
+- [PolyglotMarkdown](#polyglotmarkdown)
+  - [Overview](#overview)
+  - [Why Would I Use This Instead of Separate Files for Each Language?](#why-would-i-use-this-instead-of-separate-files-for-each-language)
+  - [Key Features](#key-features)
+    - [1. Metadata Section](#1-metadata-section)
+    - [2. Content Section](#2-content-section)
+    - [3. Comments and Annotations](#3-comments-and-annotations)
+    - [4. Content Versioning](#4-content-versioning)
+    - [5. Transclusion (Including External Content)](#5-transclusion-including-external-content)
+    - [6. Inter-document Links with Language Awareness](#6-inter-document-links-with-language-awareness)
+    - [7. Multi-language Indexing and Search](#7-multi-language-indexing-and-search)
+  - [Using the PolyglotParser](#using-the-polyglotparser)
+    - [Initialization](#initialization)
+    - [Parsing Metadata](#parsing-metadata)
+    - [Parsing Content](#parsing-content)
+    - [Handling Fallback Language](#handling-fallback-language)
+    - [Handling Versioning](#handling-versioning)
+    - [Handling Transclusion](#handling-transclusion)
+    - [Example Usage](#example-usage)
+    - [Explanation of the Process](#explanation-of-the-process)
+  - [In Closing](#in-closing)
+
 ## Overview
 
 This document introduces the *PolyglotMarkdown* format and the `PolyglotParser` Python class, which can parse and process *PolyglotMarkdown* documents. A goal of this project is to provide parsers in other programming languages in the near future.
@@ -16,6 +40,10 @@ The *PolyglotMarkdown* format is ideal for creating documents that need to be ac
 Imagine you have 100 articles in your knowledge base, and right now you’re managing them in two languages. With separate Markdown files per language, that’s already 200 files to manage! As your business grows and you start adding more languages — 5 or even 10 — those 200 files will balloon into 500 or 1000. Painful!
 
 But PolyglotMarkdown might be just what you're looking for. Instead of trying to keep every language version of your articles consistently worded and consistently formatted across a bunch of files, PolyglotMarkdown lets you manage everything in one tidy package. Want to add a new section to an article? You can do it in one place, and it’s there for every language. Need to delete something? One and done. No need to open a dozen files just to make the same small change for all the languages you support.
+
+One of the significant advantages of PolyglotMarkdown is the ability to manage partially translated content. On many multilingual websites, some content of lesser value or interest is often left untranslated "for later" and may or may not get translated in the end. If you use a multi-file approach, you would have to copy and paste these sections across different language files. However, with PolyglotMarkdown's [fallback mechanism](README.md#handling-fallback-language), you can maintain such sections in the fallback language, ensuring that they are still available to readers even if they aren't translated.
+
+This approach is not just beneficial for content that might be translated in the future. There are sections of documents that often do not require translation at all, such as code snippets or mathematical formulas. With PolyglotMarkdown, these can remain in the fallback language, or be included as-is, without needing redundant copies across multiple files.
 
 But PolyglotMarkdown isn’t all-or-nothing. If you already have separate files for each language and that works for you, great! You can combine them into a PolyglotMarkdown document using [transclusion](README.md#5-transclusion-including-external-content) and enjoy the benefits without tossing your existing workflow out the window. It’s flexible.
 
@@ -103,10 +131,10 @@ Use HTML-style comments with a language tag.
 **Example:**
 
 ```markdown
-<!-- Comment [en]: This section needs review -->
+<!-- Comment :[en]: This section needs review -->
 :[en]: This is the content in English.
 
-<!-- Comment [es]: Esta sección necesita revisión -->
+<!-- Comment :[es]: Esta sección necesita revisión -->
 :[es]: Este es el contenido en español.
 ```
 
