@@ -27,6 +27,8 @@ This project is a *Work in Progress*
     - [Explanation of the Process](#explanation-of-the-process)
   - [In Closing](#in-closing)
 
+  <!-- Created with https://luciopaiva.com/markdown-toc/ -->
+
 ## Overview
 
 This document introduces the *PolyglotMarkdown* format and the `PolyglotParser` Python class, which can parse and process *PolyglotMarkdown* documents. A goal of this project is to provide parsers in other programming languages in the near future.
@@ -53,7 +55,7 @@ So, if you’re looking to keep your sanity as your content grows and the number
 
 ### 1. Metadata Section
 
-The document begins with a metadata block marked by `---` at the beginning and end. This section is used to define key information about the document, such as the title, author, date, and other relevant metadata. The metadata can be defined in multiple languages, allowing for language-specific metadata.
+The document begins with a metadata block marked by `---` at the beginning and end. This section is used to define key information about the document, such as the title, author, date, and other relevant metadata. The metadata can be defined in multiple languages, allowing for language-specific metadata. Currently, the only top-leve metadata keys specified in `PolyglotMarkdown` are [`fallback_lang`](README.md#fallback-language-support) and [`versions`](README.md#4-content-versioning). Any other metadata can be defined as needed, with each language-specific value nested under the appropriate key.
 
 **Example:**
 
@@ -75,7 +77,7 @@ versions:
 ---
 ```
 
-**Fallback Language Support**
+#### Fallback Language Support
 
 If content in the requested language is not available, you can specify a fallback language using the `fallback_lang` field in the metadata. This ensures that the reader can still access the content, even if it's not available in their preferred language.
 
@@ -270,13 +272,13 @@ versions:
 # Introduction
 
 :[lang:en]:
-This is the introduction to the document in English.
+This is the introduction to the document in **English**.
 
 :[lang:es]:
-Esta es la introducción al documento en español.
+Esta es la introducción al documento en **español**.
 
 :[lang:fr]:
-Ceci est l'introduction du document en français.
+Ceci est l'introduction du document en **français**.
 
 # Content Section
 
@@ -297,21 +299,30 @@ Voici un autre contenu en français.
 
 # Versioned Content
 
+:[version "1.0"]:
+:[lang:en]: - This bullet-point is only available in version 1.0 in English.
+
 :[version "1.1"]:
-:[lang:en]: This content is only available in version 1.1 in English.
-:[lang:es]: Este contenido solo está disponible en la versión 1.1 en español.
-:[lang:fr]: Ce contenu n'est disponible que dans la version 1.1 en français.
+:[lang:en]: - This English version 1.1 bullet-point won't be used!
+:[lang:es]: - Este punto solo está disponible en la versión 1.1 en español.
+:[lang:fr]: - Cette puce n'est disponible que dans la version 1.1 en français.
 
 # Conclusion
 
 :[lang:en]:
-This is the conclusion in English.
+> "A closing quote" - some person
+
+*This is the conclusion in English.*
 
 :[lang:es]:
-Esta es la conclusión en español.
+> "Una cita de cierre" - alguna persona
+
+*Esta es la conclusión en español.*
 
 :[lang:fr]:
-Ceci est la conclusion en français.
+> "Une citation finale" - une personne
+
+*Ceci est la conclusion en français.*
 ```
 
 #### External File
