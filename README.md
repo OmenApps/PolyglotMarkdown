@@ -67,27 +67,27 @@ fallback_lang: "en"
 The content section of the document can be structured in two ways:
 
 1. **Portion-marked (Per Paragraph or Sentence):**  
-   You can mark individual paragraphs or sentences with a language code using the syntax `{{lang-code}}`. This allows for precise control over which language is displayed for each piece of content.
+   You can mark individual paragraphs or sentences with a language code using the syntax `:[lang-code]:`. This allows for precise control over which language is displayed for each piece of content.
 
    **Example:**
 
    ```markdown
-   {{en}} This is the first paragraph in English.
-   {{es}} Este es el primer párrafo en español.
+   :[en]: This is the first paragraph in English.
+   :[es]: Este es el primer párrafo en español.
    ```
 
 2. **Grouped by Language:**  
-   Alternatively, you can group entire sections of content by language. Each block of content is marked with a specific language delimiter using the syntax `{{lang:code}}`.
+   Alternatively, you can group entire sections of content by language. Each block of content is marked with a specific language delimiter using the syntax `:[lang:code]:`.
 
    **Example:**
 
    ```markdown
-   {{lang:en}}
+   :[lang:en]:
    This is a section in English.
 
    Here is another paragraph in English.
 
-   {{lang:es}}
+   :[lang:es]:
    Esta es una sección en español.
 
    Aquí hay otro párrafo en español.
@@ -104,15 +104,15 @@ Use HTML-style comments with a language tag.
 
 ```markdown
 <!-- Comment [en]: This section needs review -->
-{{en}} This is the content in English.
+:[en]: This is the content in English.
 
 <!-- Comment [es]: Esta sección necesita revisión -->
-{{es}} Este es el contenido en español.
+:[es]: Este es el contenido en español.
 ```
 
 ### 4. Content Versioning
 
-*PolyglotMarkdown* supports versioning within the document, allowing authors to maintain different versions of content for different languages or editions. Versioning is defined in the metadata and referenced within the content using the `{{version "x.x"}}` syntax.
+*PolyglotMarkdown* supports versioning within the document, allowing authors to maintain different versions of content for different languages or editions. Versioning is defined in the metadata and referenced within the content using the `:[version "x.x"]:` syntax.
 
 **Example:**
 
@@ -123,13 +123,13 @@ versions:
   es: "1.0"
 ---
 
-{{version "1.0"}}
-{{lang:en}} This is version 1.0 in English. It will not be shown, as the version is 1.1.
-{{lang:es}} Esta es la versión 1.0 en español.
+:[version "1.0"]:
+:[lang:en]: This is version 1.0 in English. It will not be shown, as the version is 1.1.
+:[lang:es]: Esta es la versión 1.0 en español.
 
-{{version "1.1"}}
-{{lang:en}} This is version 1.1 in English.
-{{lang:es}} Esta es la versión 1.1 en español. No se mostrará porque la versión es 1.0.
+:[version "1.1"]:
+:[lang:en]: This is version 1.1 in English.
+:[lang:es]: Esta es la versión 1.1 en español. No se mostrará porque la versión es 1.0.
 ```
 
 ### 5. Transclusion (Including External Content)
@@ -137,12 +137,12 @@ versions:
 *PolyglotMarkdown* supports transclusion, which allows you to include content from external files. This is useful for large projects where content is maintained in different places. All relevant content for the specified language will be included in the final document, in the order it appears in the source file.
 
 **Syntax:**  
-Use `{{include "file.md" lang="code"}}` to include external content.
+Use `:[include "file.md" lang:code]:` to include external content.
 
 **Example:**
 
 ```markdown
-{{include "section1.md" lang="en"}}
+:[include "section1.md" lang:en]:
 ```
 
 ### 6. Inter-document Links with Language Awareness
@@ -150,13 +150,13 @@ Use `{{include "file.md" lang="code"}}` to include external content.
 Create links to other documents that automatically resolve to the appropriate language version if it exists. This ensures that internal links work correctly regardless of the language being viewed.
 
 **Syntax:**  
-Use `{{link "document.md" lang="code"}}` to create language-aware links.
+Use `:[link "document.md" lang:code]:` to create language-aware links.
 
 **Example:**
 
 ```markdown
-{{en}} See the [related document]({{link "related_doc.md" lang="en"}}).
-{{es}} Consulte el [documento relacionado]({{link "related_doc.md" lang="es"}}).
+:[en]: See the [related document](:[link "related_doc.md" lang:en]:).
+:[es]: Consulte el [documento relacionado](:[link "related_doc.md" lang:es]:).
 ```
 
 ### 7. Multi-language Indexing and Search
@@ -209,7 +209,7 @@ parser.handle_versioning(version="1.1")
 
 ### Handling Transclusion
 
-The `handle_transclusion()` method processes `{{include ...}}` tags, replacing them with the content of the specified files.
+The `handle_transclusion()` method processes `:[include ...]:` tags, replacing them with the content of the specified files.
 
 ```python
 parser.handle_transclusion()
@@ -241,48 +241,48 @@ versions:
 
 # Introduction
 
-{{lang:en}}
+:[lang:en]:
 This is the introduction to the document in English.
 
-{{lang:es}}
+:[lang:es]:
 Esta es la introducción al documento en español.
 
-{{lang:fr}}
+:[lang:fr]:
 Ceci est l'introduction du document en français.
 
 # Content Section
 
-{{lang:en}}
+:[lang:en]:
 This is the first content section in English.  
-{{include "external_file_en.md" lang="en"}}  
+:[include "external_file_en.md" lang:en]:  
 Here is some more English content.
 
-{{lang:es}}
+:[lang:es]:
 Esta es la primera sección de contenido en español.  
-{{include "external_file_es.md" lang="es"}}  
+:[include "external_file_es.md" lang:es]:  
 Aquí hay más contenido en español.
 
-{{lang:fr}}
+:[lang:fr]:
 Ceci est la première section de contenu en français.  
-{{include "external_file_fr.md" lang="fr"}}  
+:[include "external_file_fr.md" lang:fr]:  
 Voici un autre contenu en français.
 
 # Versioned Content
 
-{{version "1.1"}}
-{{lang:en}} This content is only available in version 1.1 in English.
-{{lang:es}} Este contenido solo está disponible en la versión 1.1 en español.
-{{lang:fr}} Ce contenu n'est disponible que dans la version 1.1 en français.
+:[version "1.1"]:
+:[lang:en]: This content is only available in version 1.1 in English.
+:[lang:es]: Este contenido solo está disponible en la versión 1.1 en español.
+:[lang:fr]: Ce contenu n'est disponible que dans la version 1.1 en français.
 
 # Conclusion
 
-{{lang:en}}
+:[lang:en]:
 This is the conclusion in English.
 
-{{lang:es}}
+:[lang:es]:
 Esta es la conclusión en español.
 
-{{lang:fr}}
+:[lang:fr]:
 Ceci est la conclusion en français.
 ```
 
@@ -293,24 +293,22 @@ The document includes an external file with content for each language (in any or
 **external_file.md:**
 
 ```markdown
-{{lang:en}}
+:[lang:en]:
 This content is included from an external English file.
 
-
-{{lang:es}}
+:[lang:es]:
 Este contenido se incluye desde un archivo externo en español.
 
-{{lang:fr}}
+:[lang:fr]:
 Ce contenu est inclus à partir d'un fichier externe en français.
 
-
-{{lang:es}}
+:[lang:es]:
 Quiero una manzana.
 
-{{lang:en}}
+:[lang:en]:
 I want an apple.
 
-{{lang:fr}}
+:[lang:fr]:
 Je veux une pomme.
 ```
 
@@ -339,48 +337,48 @@ versions:
 
 # Introduction
 
-{{lang:en}}
+:[lang:en]:
 This is the introduction to the document in English.
 
-{{lang:es}}
+:[lang:es]:
 Esta es la introducción al documento en español.
 
-{{lang:fr}}
+:[lang:fr]:
 Ceci est l'introduction du document en français.
 
 # Content Section
 
-{{lang:en}}
+:[lang:en]:
 This is the first content section in English.  
-{{include "external_file.md" lang="en"}}  
+:[include "external_file.md" lang:en]:  
 Here is some more English content.
 
-{{lang:es}}
+:[lang:es]:
 Esta es la primera sección de contenido en español.  
-{{include "external_file.md" lang="es"}}  
+:[include "external_file.md" lang:es]:  
 Aquí hay más contenido en español.
 
-{{lang:fr}}
+:[lang:fr]:
 Ceci est la première section de contenu en français.  
-{{include "external_file.md" lang="fr"}}  
+:[include "external_file.md" lang:fr]:  
 Voici un autre contenu en français.
 
 # Versioned Content
 
-{{version "1.1"}}
-{{lang:en}} This content is only available in version 1.1 in English.
-{{lang:es}} Este contenido solo está disponible en la versión 1.1 en español.
-{{lang:fr}} Ce contenu n'est disponible que dans la version 1.1 en français.
+:[version "1.1"]:
+:[lang:en]: This content is only available in version 1.1 in English.
+:[lang:es]: Este contenido solo está disponible en la versión 1.1 en español.
+:[lang:fr]: Ce contenu n'est disponible que dans la version 1.1 en français.
 
 # Conclusion
 
-{{lang:en}}
+:[lang:en]:
 This is the conclusion in English.
 
-{{lang:es}}
+:[lang:es]:
 Esta es la conclusión en español.
 
-{{lang:fr}}
+:[lang:fr]:
 Ceci est la conclusion en français.
 """
 
@@ -473,7 +471,7 @@ Ceci est la conclusion en français.
 
 3. **Handling Versioning:** The parser filters out content that is not applicable to the specified version (in this case, version 1.1).
 
-4. **Handling Transclusion:** The parser processes any `{{include ...}}` tags, replacing them with the content from the corresponding external files.
+4. **Handling Transclusion:** The parser processes any `:[include ...]:` tags, replacing them with the content from the corresponding external files.
 
 5. **Generating Output:** Finally, the content is converted back to Markdown for each specified language, using the `convert_to_markdown` method. The fallback mechanism ensures that if any content is missing for a requested language, it defaults to the fallback language specified in the metadata.
 
