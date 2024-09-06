@@ -1,4 +1,5 @@
 # PolyglotMarkdown
+
 A versatile Markdown extension designed to manage and display multilingual content within a single document, offering powerful features like language-specific content inclusion, multi-language metadata support, and version control for a global audience.
 
 This project is a *Work in Progress*
@@ -6,28 +7,43 @@ This project is a *Work in Progress*
 ## Table of contents
 
 - [PolyglotMarkdown](#polyglotmarkdown)
+  - [Table of contents](#table-of-contents)
   - [Overview](#overview)
   - [Why Would I Use This Instead of Separate Files for Each Language?](#why-would-i-use-this-instead-of-separate-files-for-each-language)
   - [Key Features](#key-features)
     - [1. Metadata Section](#1-metadata-section)
-    - [2. Content Section](#2-content-section)
+      - [Fallback Language Support](#fallback-language-support)
+    - [2. Portion Marking](#2-portion-marking)
     - [3. Comments and Annotations](#3-comments-and-annotations)
     - [4. Content Versioning](#4-content-versioning)
     - [5. Transclusion (Including External Content)](#5-transclusion-including-external-content)
     - [6. Inter-document Links with Language Awareness](#6-inter-document-links-with-language-awareness)
     - [7. Multi-language Indexing and Search](#7-multi-language-indexing-and-search)
-  - [Using the PolyglotParser](#using-the-polyglotparser)
+  - [Using the PolyglotParser Python Class](#using-the-polyglotparser-python-class)
     - [Initialization](#initialization)
     - [Parsing Metadata](#parsing-metadata)
+    - [Parsing Metadata by Language](#parsing-metadata-by-language)
     - [Parsing Content](#parsing-content)
     - [Handling Fallback Language](#handling-fallback-language)
     - [Handling Versioning](#handling-versioning)
     - [Handling Transclusion](#handling-transclusion)
     - [Example Usage](#example-usage)
-    - [Explanation of the Process](#explanation-of-the-process)
+      - [Example Document Content](#example-document-content)
+      - [External Files](#external-files)
+      - [Parsing and Handling the Document](#parsing-and-handling-the-document)
+      - [Expected Output](#expected-output)
+    - [Using the PolyglotParser Methods](#using-the-polyglotparser-methods)
+      - [Example PolyglotMarkdown Document](#example-polyglotmarkdown-document)
+      - [Initializing the Parser](#initializing-the-parser)
+      - [Parsing Metadata](#parsing-metadata-1)
+      - [Parsing Metadata by Language](#parsing-metadata-by-language-1)
+      - [Listing Available Languages](#listing-available-languages)
+      - [Parsing Content by Language](#parsing-content-by-language)
+  - [Using the PolyglotBuilder Python Class](#using-the-polyglotbuilder-python-class)
+    - [Initialization](#initialization-1)
   - [In Closing](#in-closing)
 
-  <!-- Created with https://luciopaiva.com/markdown-toc/ -->
+<!-- Created with https://luciopaiva.com/markdown-toc/ -->
 
 ## Overview
 
@@ -43,28 +59,30 @@ Imagine you have 100 articles in your knowledge base, and right now you’re man
 
 But PolyglotMarkdown might be just what you're looking for. Instead of trying to keep every language version of your articles consistently worded and consistently formatted across a bunch of files, PolyglotMarkdown lets you manage everything in one tidy package. Want to add a new section to an article? You can do it in one place, and it’s there for every language. Need to delete something? One and done. No need to open a dozen files just to make the same small change for all the languages you support.
 
-One of the significant advantages of PolyglotMarkdown is the ability to manage partially translated content. On many multilingual websites, some content of lesser value or interest is often left untranslated "for later" and may or may not get translated in the end. If you use a multi-file approach, you would have to copy and paste these sections across different language files. However, with PolyglotMarkdown's [fallback mechanism](README.md#handling-fallback-language), you can maintain such sections in the fallback language, ensuring that they are still available to readers even if they aren't translated.
+One of the significant advantages of PolyglotMarkdown is the ability to manage partially translated content. On many multilingual websites, some content of lesser value or interest is often left untranslated "for later" and may or may not get translated in the end. If you use a multi-file approach, you would have to copy and paste these sections across different language files. However, with PolyglotMarkdown's [fallback mechanism](#handling-fallback-language), you can maintain such sections in the fallback language, ensuring that they are still available to readers even if they aren't translated.
 
 This approach is not just beneficial for content that might be translated in the future. There are sections of documents that often do not require translation at all, such as code snippets or mathematical formulas. With PolyglotMarkdown, these can remain in the fallback language, or be included as-is, without needing redundant copies across multiple files.
 
-But PolyglotMarkdown isn’t all-or-nothing. If you already have separate files for each language and that works for you, great! You can combine them into a PolyglotMarkdown document using [transclusion](README.md#5-transclusion-including-external-content) and enjoy the benefits without tossing your existing workflow out the window. It’s flexible.
+But PolyglotMarkdown isn’t all-or-nothing. If you already have separate files for each language and that works for you, great! You can combine them into a PolyglotMarkdown document using [transclusion](#5-transclusion-including-external-content) and enjoy the benefits without tossing your existing workflow out the window. It’s flexible.
 
 So, if you’re looking to keep your sanity as your content grows and the number of languages you support increases, PolyglotMarkdown is worth considering. It’s like having one file to rule them all, making your work smoother, faster, and less stressful. And who doesn’t want that?
 
 ## Key Features
 
+The *PolyglotMarkdown* format is simply an extension of the standard Markdown format, with additional features to support multilingual content. Here are some key features of the *PolyglotMarkdown* format:
+
 ### 1. Metadata Section
 
-The document begins with a metadata block marked by `---` at the beginning and end. This section is used to define key information about the document, such as the title, author, date, and other relevant metadata. The metadata can be defined in multiple languages, allowing for language-specific metadata. Currently, the only top-leve metadata keys specified in `PolyglotMarkdown` are [`fallback_lang`](README.md#fallback-language-support) and [`versions`](README.md#4-content-versioning). Any other metadata can be defined as needed, with each language-specific value nested under the appropriate key.
+The document begins with a metadata block marked by `---` at the beginning and end. This section is used to define key information about the document, such as the title, author, date, and other relevant metadata. The metadata can be defined in multiple languages, allowing for language-specific metadata. Currently, the only top-level metadata keys specified in `PolyglotMarkdown` are [`fallback_lang`](#fallback-language-support) and [`versions`](#4-content-versioning). Any other metadata can be defined as needed, with each language-specific value nested under the appropriate key.
 
 **Example:**
 
 ```markdown
 ---
-title: 
+title:
   en: "The Great Adventure"
   es: "La Gran Aventura"
-author: 
+author:
   en: "John Doe"
   es: "Juan Pérez"
 date:
@@ -85,19 +103,19 @@ If content in the requested language is not available, you can specify a fallbac
 
 ```markdown
 ---
-title: 
+title:
   en: "The Great Adventure"
   es: "La Gran Aventura"
 fallback_lang: "en"
 ---
 ```
 
-### 2. Content Section
+### 2. Portion Marking
 
-The content section of the document can be structured in two ways:
+The content section of the document can be portion-marked by language in two ways:
 
-1. **Portion-marked (Per Paragraph or Sentence):**  
-   You can mark individual paragraphs or sentences with a language code using the syntax `:[lang-code]:`. This allows for precise control over which language is displayed for each piece of content.
+1. **Per Line:**
+   You can mark individual lines with a language code using the syntax `:[lang-code]:`. This allows for precise control over which language is displayed for each piece of content.
 
    **Example:**
 
@@ -106,8 +124,8 @@ The content section of the document can be structured in two ways:
    :[es]: Este es el primer párrafo en español.
    ```
 
-2. **Grouped by Language:**  
-   Alternatively, you can group entire sections of content by language. Each block of content is marked with a specific language delimiter using the syntax `:[lang:code]:`.
+2. **Per Paragraph or Section:**
+   Alternatively, you can group entire sections of content by language. Each block of content is marked with a specific language delimiter using the syntax `:[lang:lang-code]:`.
 
    **Example:**
 
@@ -127,7 +145,7 @@ The content section of the document can be structured in two ways:
 
 The *PolyglotMarkdown* format allows for language-specific comments or annotations. These can be used by authors or translators to provide context or notes within the document.
 
-**Syntax:**  
+**Syntax:**
 Use HTML-style comments with a language tag.
 
 **Example:**
@@ -164,22 +182,31 @@ versions:
 
 ### 5. Transclusion (Including External Content)
 
-*PolyglotMarkdown* supports transclusion, which allows you to include content from external files. This is useful for large projects where content is maintained in different places. All relevant content for the specified language will be included in the final document, in the order it appears in the source file.
+*PolyglotMarkdown* supports transclusion, which allows you to include content from external files. This is useful for large projects where content is maintained in different places. You can include an entire file, ignoring language-specific sections, or include content for a specific language.
 
-**Syntax:**  
-Use `:[include "file.md" lang:code]:` to include external content.
+To include all content from an external file:
+
+**Syntax:**
+`:[include "file.md"]:`
+
+To include only relevant content for the specified language in the final document (in the order such content appears in the source file):
+
+**Syntax:**
+`:[include "file.md" lang:code]:`
 
 **Example:**
 
 ```markdown
-:[include "section1.md" lang:en]:
+:[include "bike_article.md" lang:en]:
 ```
 
 ### 6. Inter-document Links with Language Awareness
 
+> **Note:** This feature is experimental and may require additional processing by the consuming application.
+
 Create links to other documents that automatically resolve to the appropriate language version if it exists. This ensures that internal links work correctly regardless of the language being viewed.
 
-**Syntax:**  
+**Syntax:**
 Use `:[link "document.md" lang:code]:` to create language-aware links.
 
 **Example:**
@@ -193,32 +220,80 @@ Use `:[link "document.md" lang:code]:` to create language-aware links.
 
 The *PolyglotMarkdown* format is designed to support multi-language indexing and search capabilities. This allows users to search within the document in their preferred language. While the file format itself supports this, the implementation would typically be handled by the application consuming the *PolyglotMarkdown* files.
 
-## Using the PolyglotParser
+## Using the PolyglotParser Python Class
 
-The `PolyglotParser` class is designed to parse *PolyglotMarkdown* documents, allowing you to extract and manipulate the content based on language, version, and other parameters.
+The `PolyglotParser` class is designed to parse *PolyglotMarkdown* texts and files, allowing you to extract and manipulate the content based on language, version, and other parameters.
 
 ### Initialization
 
-To use the parser, instantiate it with the content of a *PolyglotMarkdown* document.
+To use the parser, instantiate it with the text of a *PolyglotMarkdown* document.
 
 ```python
-parser = PolyglotParser(content)
+from polyglot_parser import PolyglotParser
+
+parser = PolyglotParser(markdown_string=content)
+```
+
+Alternately, if you have a file, you can read the content and pass the file path as a string:
+
+```python
+from polyglot_parser import PolyglotParser
+
+parser = PolyglotParser(markdown_file="document.md")
+```
+
+Or as a `Path` object:
+
+```python
+from pathlib import Path
+from polyglot_parser import PolyglotParser
+
+file_path = Path("document.md")
+parser = PolyglotParser(markdown_file=file_path)
 ```
 
 ### Parsing Metadata
 
-The `parse_metadata()` method extracts the metadata from the document.
+The `parse_metadata()` method extracts the metadata from the document and returns it as a dictionary with language-specific values nested under their respective keys.
 
 ```python
-parser.parse_metadata()
+metadata = parser.parse_metadata()
+```
+
+Example output:
+
+```json
+{
+  "title": {"en": "The Great Adventure", "es": "La Gran Aventura"},
+  "author": {"en": "John Doe", "es": "Juan Pérez"},
+  "date": "2024-08-25",
+  "fallback_lang": "en",
+  "versions": {"en": "1.0", "es": "1.1"}
+}
+```
+
+### Parsing Metadata by Language
+
+The `parse_metadata_by_language()` method restructures the metadata, returning a dictionary organized by language.
+
+```python
+metadata_by_language = parser.parse_metadata_by_language()
+```
+
+Example output:
+```json
+{
+  "en": {"title": "The Great Adventure", "author": "John Doe", "date": "2024-08-25", "fallback_lang": "en", "versions": "1.0"},
+  "es": {"title": "La Gran Aventura", "author": "Juan Pérez", "date": "2024-08-25", "fallback_lang": "en", "versions": "1.1"}
+}
 ```
 
 ### Parsing Content
 
-The `parse_content()` method parses the content, separating it into language-specific sections.
+The `parse_content()` method parses the content, separating it into language-specific sections and returning a dictionary where the keys are language codes and the values are the respective content.
 
 ```python
-parser.parse_content()
+content = parser.parse_content()
 ```
 
 ### Handling Fallback Language
@@ -226,7 +301,7 @@ parser.parse_content()
 If content in the requested language is missing, the parser will automatically use the fallback language specified in the metadata.
 
 ```python
-print(parser.convert_to_markdown(lang='es'))  # Will fallback to 'en' if 'es' content is missing
+output = parser.convert_to_markdown(lang='es')  # Will fallback to 'en' if 'es' content is missing
 ```
 
 ### Handling Versioning
@@ -247,21 +322,26 @@ parser.handle_transclusion()
 
 ### Example Usage
 
-Let's consider a document that includes content in English, Spanish, and French. The document has different sections for each language, some versioned content, and includes an external file. We will walk through how to parse and work with this document using the `PolyglotParser`.
+Let's consider a more comprehensive example that includes content in English, Spanish, and French, multiple sections, metadata, inter-document links, and external file transclusions.
 
 #### Example Document Content
 
-```markdown
+```python
+content = """
 ---
-title: 
+title:
   en: "The Great Adventure"
   es: "La Gran Aventura"
   fr: "La Grande Aventure"
-author: 
+author:
   en: "John Doe"
   es: "Juan Pérez"
   fr: "Jean Dupont"
-date: "2024-08-25"
+region:
+  en: "United States of America"
+  es: "Centroamérica"
+  fr: "Europe"
+date: "2024-09-05"
 fallback_lang: "en"
 versions:
   en: "1.0"
@@ -269,86 +349,177 @@ versions:
   fr: "1.1"
 ---
 
+:[lang:en]:
 # Introduction
 
-:[lang:en]:
-This is the introduction to the document in **English**.
+Welcome to **The Great Adventure**. This document will guide you through the basics of using PolyglotMarkdown.
 
 :[lang:es]:
-Esta es la introducción al documento en **español**.
+# Introducción
+
+Bienvenidos a **La Gran Aventura**. Este documento le guiará a través de los conceptos básicos del uso de PolyglotMarkdown.
 
 :[lang:fr]:
-Ceci est l'introduction du document en **français**.
+# Introduction
 
-# Content Section
+Bienvenue dans **La Grande Aventure**. Ce document vous guidera à travers les bases de l'utilisation de PolyglotMarkdown.
 
 :[lang:en]:
-This is the first content section in English.  
-:[include "external_file_en.md" lang:en]:  
-Here is some more English content.
+# First Section
 
-:[lang:es]:
-Esta es la primera sección de contenido en español.  
-:[include "external_file_es.md" lang:es]:  
-Aquí hay más contenido en español.
-
-:[lang:fr]:
-Ceci est la première section de contenu en français.  
-:[include "external_file_fr.md" lang:fr]:  
-Voici un autre contenu en français.
+Here is the first section with some sample text in English.
 
 # Versioned Content
 
-:[version "1.0"]:
-:[lang:en]: - This bullet-point is only available in version 1.0 in English.
-
-:[version "1.1"]:
-:[lang:en]: - This English version 1.1 bullet-point won't be used!
-:[lang:es]: - Este punto solo está disponible en la versión 1.1 en español.
-:[lang:fr]: - Cette puce n'est disponible que dans la version 1.1 en français.
-
-# Conclusion
-
-:[lang:en]:
-> "A closing quote" - some person
-
-*This is the conclusion in English.*
-
 :[lang:es]:
-> "Una cita de cierre" - alguna persona
+# Primera Sección
 
-*Esta es la conclusión en español.*
+Aquí está la primera sección con un texto de ejemplo en español.
+
+# Contenido Versionado
 
 :[lang:fr]:
-> "Une citation finale" - une personne
+# Première Section
 
-*Ceci est la conclusion en français.*
+Voici la première section avec un exemple de texte en français.
+
+# Contenu Versionné
+
+:[version "1.0"]:
+:[en]: - This English content is for version 1.0.
+
+:[version "1.1"]:
+:[en]: - This English version 1.1 bullet-point won't be used!
+:[es]: - Este contenido en español es para la versión 1.1.
+:[fr]: - Ce contenu en français est pour la version 1.1.
+
+:[lang:en]:
+# Inter-document Links
+
+For more details, check out the [Advanced Features](:[link "advanced_features.md" lang:en]:) document, specifically section [Advanced Feature 1](:[link "advanced_features.md#advanced-feature-1" lang:en]:).
+
+:[lang:es]:
+# Enlaces entre Documentos
+
+Para más detalles, consulte el documento [Funciones avanzadas](:[link "advanced_features.md" lang:es]:), específicamente la sección [Función Avanzada 1](:[link "advanced_features.md#función-avanzada-1" lang:es]:).
+
+:[lang:fr]:
+# Liens Inter-documents
+
+Pour plus de détails, consultez le document [Fonctionnalités avancées](:[link "advanced_features.md" lang:fr]:), en particulier la section [Fonctionnalité Avancée 1](:[link "advanced_features.md#fonctionnalité-avancée-1" lang:fr]:).
+
+:[lang:en]:
+# External Content
+
+Here is some included English content from an external file with a single language:
+:[include "extra_content_en.md"]:
+
+This content is also from an external file, but the file includes content for multiple languages:
+:[include "external_file.md" lang:en]:
+
+:[lang:es]:
+# Contenido Externo
+
+A continuación se incluye contenido en español desde un archivo externo con un solo idioma:
+:[include "extra_content_es.md"]:
+
+Este contenido también proviene de un archivo externo, pero el archivo incluye contenido para varios idiomas:
+:[include "external_file.md" lang:es]:
+
+:[lang:fr]:
+# Contenu Externe
+
+Voici quelques contenus français inclus à partir d’un fichier externe avec une seule langue:
+:[include "extra_content_fr.md"]:
+
+Ce contenu provient également d'un fichier externe, mais le fichier inclut du contenu pour plusieurs langues:
+:[include "external_file.md" lang:fr]:
+
+:[lang:en]:
+# Conclusion
+
+Thank you for reading **The Great Adventure**. We hope this helps you understand PolyglotMarkdown.
+
+:[lang:es]:
+# Conclusión
+
+Gracias por leer **La Gran Aventura**. Esperamos que esto le ayude a comprender PolyglotMarkdown.
+
+:[lang:fr]:
+# Conclusion
+
+Merci d'avoir lu **La Grande Aventure**. Nous espérons que cela vous aidera à comprendre PolyglotMarkdown.
+"""
 ```
 
-#### External File
+#### External Files
 
-The document includes an external file with content for each language (in any order):
+**extra_content_en.md:**
+
+```markdown
+This is additional content in English, included from an external file.
+```
+
+**extra_content_es.md:**
+
+```markdown
+Este es contenido adicional en español, incluido desde un archivo externo.
+```
+
+**extra_content_fr.md:**
+
+```markdown
+Voici du contenu supplémentaire en français, inclus à partir d'un fichier externe.
+```
 
 **external_file.md:**
 
 ```markdown
 :[lang:en]:
-This content is included from an external English file.
+This content...
+
+... is included from an external English file.
 
 :[lang:es]:
-Este contenido se incluye desde un archivo externo en español.
+Este contenido...
+
+... se incluye desde un archivo externo en español.
 
 :[lang:fr]:
-Ce contenu est inclus à partir d'un fichier externe en français.
+Ce contenu...
 
-:[lang:es]:
-Quiero una manzana.
+... est inclus à partir d'un fichier externe en français.
 
+:[es]: Quiero una manzana.
+
+:[en]: I want an apple.
+
+:[fr]: Je veux une pomme.
+```
+
+**advanced_features.md:**
+
+```markdown
 :[lang:en]:
-I want an apple.
+This document contains advanced features.
+
+# Advanced Feature 1
+
+This is the first advanced feature.
+
+:[lang:es]:
+Este documento contiene funciones avanzadas.
+
+# Función Avanzada 1
+
+Esta es la primera función avanzada.
 
 :[lang:fr]:
-Je veux une pomme.
+Ce document contient des fonctionnalités avancées.
+
+# Fonctionnalité Avancée 1
+
+Ceci est la première fonctionnalité avancée.
 ```
 
 #### Parsing and Handling the Document
@@ -356,73 +527,8 @@ Je veux une pomme.
 Here’s how you can use the `PolyglotParser` to handle this document:
 
 ```python
-content = """
----
-title: 
-  en: "The Great Adventure"
-  es: "La Gran Aventura"
-  fr: "La Grande Aventure"
-author: 
-  en: "John Doe"
-  es: "Juan Pérez"
-  fr: "Jean Dupont"
-date: "2024-08-25"
-fallback_lang: "en"
-versions:
-  en: "1.0"
-  es: "1.1"
-  fr: "1.1"
----
-
-# Introduction
-
-:[lang:en]:
-This is the introduction to the document in English.
-
-:[lang:es]:
-Esta es la introducción al documento en español.
-
-:[lang:fr]:
-Ceci est l'introduction du document en français.
-
-# Content Section
-
-:[lang:en]:
-This is the first content section in English.  
-:[include "external_file.md" lang:en]:  
-Here is some more English content.
-
-:[lang:es]:
-Esta es la primera sección de contenido en español.  
-:[include "external_file.md" lang:es]:  
-Aquí hay más contenido en español.
-
-:[lang:fr]:
-Ceci est la première section de contenu en français.  
-:[include "external_file.md" lang:fr]:  
-Voici un autre contenu en français.
-
-# Versioned Content
-
-:[version "1.1"]:
-:[lang:en]: This content is only available in version 1.1 in English.
-:[lang:es]: Este contenido solo está disponible en la versión 1.1 en español.
-:[lang:fr]: Ce contenu n'est disponible que dans la version 1.1 en français.
-
-# Conclusion
-
-:[lang:en]:
-This is the conclusion in English.
-
-:[lang:es]:
-Esta es la conclusión en español.
-
-:[lang:fr]:
-Ceci est la conclusion en français.
-"""
-
 # Create the parser instance
-parser = PolyglotParser(content)
+parser = PolyglotParser(markdown_string=content)
 
 # Parse the metadata
 parser.parse_metadata()
@@ -454,67 +560,275 @@ Given the document content and the external files, the expected output for each 
 **English Output:**
 
 ```markdown
-This is the introduction to the document in English.
+# Introduction
 
-This is the first content section in English.  
-This content is included from an external English file.
+Welcome to **The Great Adventure**. This document will guide you through the basics of using PolyglotMarkdown.
 
-I want an apple.  
+# First Section
 
-Here is some more English content.
+Here is the first section with some sample text in English.
 
-This content is only available in version 1.1 in English.
+# Versioned Content
 
-This is the conclusion in English.
+- This English content is for version 1.0.
+
+# Inter-document Links
+
+For more details, check out the [Advanced Features](advanced_features.md) document, specifically section [Advanced Feature 1](advanced_features.md#advanced-feature-1).
+
+# External Content
+
+Here is some included English content from an external file with a single language:
+This is additional content in English, included from an external file.
+
+This content is also from an external file, but the file includes content for multiple languages:
+This content...
+
+... is included from an external English file.
+
+I want an apple.
+
+# Conclusion
+
+Thank you for reading **The Great Adventure**. We hope this helps you understand PolyglotMarkdown.
 ```
 
 **Spanish Output:**
 
 ```markdown
-Esta es la introducción al documento en español.
+# Introducción
 
-Esta es la primera sección de contenido en español.  
-Este contenido se incluye desde un archivo externo en español.
+Bienvenidos a **La Gran Aventura**. Este documento le guiará a través de los conceptos básicos del uso de PolyglotMarkdown.
 
-Quiero una manzana.  
+# Primera Sección
 
-Aquí hay más contenido en español.
+Aquí está la primera sección con un texto de ejemplo en español.
 
-Este contenido solo está disponible en la versión 1.1 en español.
+# Contenido Versionado
 
-Esta es la conclusión en español.
+- Este contenido en español es para la versión 1.1.
+
+# Enlaces entre Documentos
+
+Para más detalles, consulte el documento [Funciones avanzadas](advanced_features.md), específicamente la sección [Función Avanzada 1](advanced_features.md#función-avanzada-1).
+
+# Contenido Externo
+
+A continuación se incluye contenido en español desde un archivo externo con un solo idioma:
+Este es contenido adicional en español, incluido desde un archivo externo.
+
+Este contenido también proviene de un archivo externo, pero el archivo incluye contenido para varios idiomas:
+Este contenido...
+
+... se incluye desde un archivo externo en español.
+
+Quiero una manzana.
+
+# Conclusión
+
+Gracias por leer **La Gran Aventura**. Esperamos que esto le ayude a comprender PolyglotMarkdown.
 ```
 
 **French Output:**
 
 ```markdown
-Ceci est l'introduction du document en français.
+# Introduction
 
-Ceci est la première section de contenu en français.  
-Ce contenu est inclus à partir d'un fichier externe en français.
+Bienvenue dans **La Grande Aventure**. Ce document vous guidera à travers les bases de l'utilisation de PolyglotMarkdown.
 
-Je veux une pomme.  
+# Première Section
 
-Voici un autre contenu en français.
+Voici la première section avec un exemple de texte en français.
 
-Ce contenu n'est disponible que dans la version 1.1 en français.
+# Contenu Versionné
 
-Ceci est la conclusion en français.
+- Ce contenu en français est pour la version 1.1.
+
+# Liens Inter-documents
+
+Pour plus de détails, consultez le document [Fonctionnalités avancées](advanced_features.md), en particulier la section [Fonctionnalité Avancée 1](advanced_features.md#fonctionnalité-avancée-1).
+
+# Contenu Externe
+
+Voici quelques contenus français inclus à partir d’un fichier externe avec une seule langue:
+Voici du contenu supplémentaire en français, inclus à partir d'un fichier externe.
+
+Ce contenu provient également d'un fichier externe, mais le fichier inclut du contenu pour plusieurs langues:
+Ce contenu...
+
+... est inclus à partir d'un fichier externe en français.
+
+Je veux une pomme.
+
+# Conclusion
+
+Merci d'avoir lu **La Grande Aventure**. Nous espérons que cela vous aidera à comprendre PolyglotMarkdown.
 ```
 
-### Explanation of the Process
+### Using the PolyglotParser Methods
 
-1. **Parsing Metadata:** The parser first extracts and processes the metadata section, including the fallback language and versions available for each language.
-   
-2. **Parsing Content:** The content is then parsed, and language-specific blocks are separated and stored in a dictionary within the parser.
+Here, we demonstrate how to use various methods of the `PolyglotParser` Python class and the resulting output for each, using the example PolyglotMarkdown text provided below.
 
-3. **Handling Versioning:** The parser filters out content that is not applicable to the specified version (in this case, version 1.1).
+#### Example PolyglotMarkdown Document
 
-4. **Handling Transclusion:** The parser processes any `:[include ...]:` tags, replacing them with the content from the corresponding external files.
+```markdown
+---
+title:
+  en: "The Great Adventure"
+  es: "La Gran Aventura"
+author:
+  en: "John Doe"
+  es: "Juan Pérez"
+date: "2024-08-25"
+fallback_lang: "en"
+versions:
+  en: "1.0"
+  es: "1.1"
+---
 
-5. **Generating Output:** Finally, the content is converted back to Markdown for each specified language, using the `convert_to_markdown` method. The fallback mechanism ensures that if any content is missing for a requested language, it defaults to the fallback language specified in the metadata.
+# Introduction
+
+:[lang:en]:
+This is the introduction in **English**.
+
+:[lang:es]:
+Esta es la introducción en **español**.
+
+:[lang:en]:
+This is the More English content.
+
+:[lang:es]:
+Este es el contenido Más español.
+```
+
+#### Initializing the Parser
+
+To begin, initialize the `PolyglotParser` with the markdown content.
+
+```python
+parser = PolyglotParser(markdown_string=text)
+```
+
+#### Parsing Metadata
+
+The `parse_metadata()` method extracts the metadata from the document, including the title, author, date, fallback language, and versions.
+
+```python
+metadata = parser.parse_metadata()
+print(metadata)
+```
+
+**Expected Output:**
+
+```json
+{
+  "title": {
+    "en": "The Great Adventure",
+    "es": "La Gran Aventura"
+  },
+  "author": {
+    "en": "John Doe",
+    "es": "Juan Pérez"
+  },
+  "date": "2024-08-25",
+  "fallback_lang": "en",
+  "versions": {
+    "en": "1.0",
+    "es": "1.1"
+  }
+}
+```
+
+#### Parsing Metadata by Language
+
+The `parse_metadata_by_language()` method organizes the metadata by language, providing a view where each language has its corresponding metadata.
+
+```python
+metadata_by_language = parser.parse_metadata_by_language()
+print(metadata_by_language)
+```
+
+**Expected Output:**
+
+```json
+{
+  "en": {
+    "title": "The Great Adventure",
+    "author": "John Doe",
+    "date": "2024-08-25",
+    "fallback_lang": "en",
+    "versions": "1.0"
+  },
+  "es": {
+    "title": "La Gran Aventura",
+    "author": "Juan Pérez",
+    "date": "2024-08-25",
+    "fallback_lang": "en",
+    "versions": "1.1"
+  }
+}
+```
+
+#### Listing Available Languages
+
+The `list_languages()` method identifies all the languages available in the document.
+
+```python
+languages = parser.list_languages()
+print(languages)
+```
+
+**Expected Output:**
+
+```python
+['es', 'en']
+```
+
+#### Parsing Content by Language
+
+The `parse_content()` method parses the content, returning a dictionary where the keys are the language codes, and the values are the content in those respective languages.
+
+```python
+content = parser.parse_content()
+print(content)
+```
+
+**Expected Output:**
+
+```json
+{
+  "es": "Esta es la introducción en **español**.\n\nEste es el contenido Más español.",
+  "en": "This is the introduction in **English**.\n\nThis is the More English content."
+}
+```
+
+To retrieve the content for only one language, falling back to `fallback_language` for any missing content, you can use the `parse_content()` method along with the `lang` parameter.
+
+```python
+english_content = parser.parse_content(lang='en')
+print(english_content)
+```
+
+These methods allow you to extract and manage multilingual content and metadata in PolyglotMarkdown texts and documents.
+
+## Using the PolyglotBuilder Python Class
+
+> **Note:** This feature is planned for future development.
+
+The `PolyglotBuilder` class is designed to create *PolyglotMarkdown* documents programmatically. This class provides methods to set metadata, add content in multiple languages, and handles versioning and transclusion.
+
+### Initialization
+
+To use the builder, instantiate it with the desired metadata and content.
+
+```python
+from polyglot_builder import PolyglotBuilder
+
+builder = PolyglotBuilder()
+```
 
 ## In Closing
 
 - The *PolyglotMarkdown* format provides a way to manage multilingual content in a single document or a set of documents. This format ensures that your content is accessible, maintainable, and easy to work with across multiple languages.
 - The `PolyglotParser` class offers a robust tool for parsing, processing, and converting *PolyglotMarkdown* documents, making it easy to integrate *PolyglotMarkdown* into your existing workflows and applications.
+- The `PolyglotBuilder` class, planned for future development, will provide a way to create *PolyglotMarkdown* documents programmatically, enabling you to generate multilingual content dynamically.
